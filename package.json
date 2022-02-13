@@ -1,0 +1,15 @@
+{
+  "name": "status-bot",
+  "version": "1.0",
+  "description": "status-bot for Cosmetic-X by xxAROX",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "xxAROX",
+  "license": "Custom",
+  "dependencies": {
+    "discord.js": "^13.6"
+  }
+}
