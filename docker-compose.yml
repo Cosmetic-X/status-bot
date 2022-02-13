@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  status-bot:
+    container_name: "Cosmetic-X-Status-Bot"
+    #image: node:17.5.0
+    build: .
+    volumes:
+      - "/home/Cosmetic-X/status-bot/cache.json:/cache.json"
+      - "/home/Cosmetic-X/status-bot/config.json:/config.json"
+    network_mode: host
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+          #deploy:
+          #resources:
+          #limits:
+        #cpus: '4.00' # 1 = core
+        #memory: 5G # 1 1G = 1GB ram
