@@ -7,9 +7,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const db = require("./db.js");
-const {REST} = require("@discordjs/rest");
-const DiscordBuilders = require("@discordjs/builders");
-const {Routes} = require("discord-api-types/v9");
 
 db.checkTables();
 
