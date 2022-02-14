@@ -137,16 +137,13 @@ async function sendStatusMessage(channel) {
 			if (offline === 0) {
 				uptime = 100;
 			} else {
-				uptime = (online / offline * 100).toFixed(1);
+				uptime = (offline / online * 100).toFixed(1);
 			}
 			uptime = " - " + ((!isNaN(uptime) ? uptime : 100) + "% uptime");
 			ping = (emoji.name !== "status_offline" ? "  -  `" + ping + "ms`" : "");
 			contents += emoji.toString() + " " + name + ping + uptime + "\n";
+			db.add(link, emoji.name !== "status_offline");
 
-			if (new Date().getHours() !== hour) {
-				hour = new Date().getHours();
-				db.add(link, emoji.name !== "status_offline");
-			}
 			if (emoji.name === "status_offline") {
 				color = "RED";
 			} else if (emoji.name === "status_slow" && color !== "RED") {
