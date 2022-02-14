@@ -10,6 +10,8 @@
   "author": "xxAROX",
   "license": "Custom",
   "dependencies": {
-    "discord.js": "^13.6"
+    "discord.js": "^13.6",
+    "fs": "^0.0.1-security",
+    "superagent": "^7.1.1"
   }
 }
