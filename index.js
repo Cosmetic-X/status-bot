@@ -95,8 +95,7 @@ async function sendStatusMessage(channel) {
 	await checkEmojis(channel.guild);
 
 	let embed = new Discord.MessageEmbed();
-	embed.setTitle("Status");
-	embed.setColor("PURPLE");
+	let color = "GREEN";
 	let contents = "";
 
 	for (let name in config.sites) {
@@ -138,9 +137,24 @@ async function sendStatusMessage(channel) {
 				month_stats[ link ][ new Date().getTime() ] = emoji.name !== "status_offline";
 				Cache.set("month_stats", month_stats);
 			}
+
+			if (emoji.name === "status_offline") {
+				color = "RED";
+			} else if (emoji.name === "status_slow" && color !== "RED") {
+				color = "YELLOW";
+			}
 		}
 	}
 	embed.setDescription(contents);
+	embed.setTitle("Status");
+	embed.setColor(color);
+	embed.setTimestamp(new Date());
+	embed.setFooter({text: "Last check"});
+	embed.setAuthor({
+		name: channel.guild.name,
+		url: "https://cosmetic-x.de",
+		iconURL: channel.guild.iconURL({size: 512}),
+	});
 
 	let message_id = Cache.get()[ "message_id" ];
 	let message;
