@@ -18,6 +18,9 @@ module.exports.get = function (link) {
 	let statement = db.prepare("SELECT status FROM uptime WHERE link=?;");
 	return statement.all(link);
 };
+module.exports.clear = function () {
+	db.exec("TRUNCATE TABLE uptime;");
+};
 module.exports.add = function (link, status) {
 	let statement = db.prepare("INSERT INTO uptime (link, status, timestamp) VALUES (?, ?, ?);");
 	statement.run(link, status ? 0 : 1, (new Date().getTime() / 1000));
