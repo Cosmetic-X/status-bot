@@ -45,6 +45,7 @@ const bot = new Discord.Client({intents: Discord.Intents.FLAGS.GUILD_MESSAGES | 
 bot.on("ready", async () => {
 	global.GUILD_NOT_FOUND_MESSAGE = "[ERROR] Discord server not found, invite me here https://discord.com/oauth2/authorize?client_id=" + bot.user.id + "&permissions=1073741824&scope=bot&guild_id=" + config.guild_id;
 	console.log("Logged in as " + bot.user.tag);
+	bot.user.setActivity({name: "Status of Cosmetic-X sites", url: "https://cosmetic-x.de", type: "WATCHING"});
 
 	let guild = await bot.guilds.fetch(config.guild_id);
 	if (!guild) {
