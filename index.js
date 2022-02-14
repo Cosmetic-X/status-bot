@@ -2,18 +2,28 @@ const Discord = require("discord.js");
 const fs = require("fs");
 
 global.done = true;
+global.counter = 0;
 global.config = require("./config.json");
 
 global.Cache = {};
 global.Cache.get = function () {
+	if (!fs.existsSync("./cache.json")) {
+		fs.writeFileSync("./cache.json", "{\n}");
+	}
 	return JSON.parse(fs.readFileSync("./cache.json").toString());
 };
 global.Cache.set = function (key, value) {
+	if (!fs.existsSync("./cache.json")) {
+		fs.writeFileSync("./cache.json", "{\n}");
+	}
 	let cache = JSON.parse(fs.readFileSync("./cache.json").toString());
 	cache[ key ] = value;
-	fs.writeFileSync("./cache.json", JSON.stringify(cache));
+	fs.writeFileSync("./cache.json", JSON.stringify(cache, null, 4));
 };
-global.Cache.remove = function (key, value) {
+global.Cache.remove = function (key) {
+	if (!fs.existsSync("./cache.json")) {
+		fs.writeFileSync("./cache.json", "{\n}");
+	}
 	let cache = JSON.parse(fs.readFileSync("./cache.json").toString());
 	if (cache[ key ]) {
 		delete cache[ key ];
@@ -34,7 +44,7 @@ bot.on("ready", async () => {
 		await checkEmojis(guild);
 		setInterval(async () => {
 			await checkStatus();
-		}, 1000 * 60);
+		}, 1000 * config.refresh_seconds);
 		await checkStatus();
 	}
 });
@@ -58,6 +68,7 @@ async function checkStatus() {
 		console.error(GUILD_NOT_FOUND_MESSAGE);
 	}
 }
+
 async function checkEmojis(guild) {
 	if (guild.emojis) {
 		for (let file of fs.readdirSync("./emojis/")) {
@@ -67,6 +78,7 @@ async function checkEmojis(guild) {
 		}
 	}
 }
+
 /**
  * @param {Discord.TextChannel} channel
  */
@@ -96,7 +108,27 @@ async function sendStatusMessage(channel) {
 			if (ping >= 5.0) {
 				emoji = channel.guild.emojis.cache.filter(emoji => emoji.name === "status_slow").first();
 			}
-			contents += emoji.toString() + " " + name + "  -  `" + ping + "ms`" + "\n";
+			contents += emoji.toString() + " " + name + (emoji.name !== "status_offline"
+				? "  -  `" + ping + "ms`"
+				: "") + "\n";
+
+			if (counter % 2 === 0) {
+				let month_stats_reset = Cache.get()[ "month_stats_reset" ];
+				if (!month_stats_reset) {
+					Cache.set("month_stats_reset", new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime());
+				} else {
+					if (new Date().getTime() <= month_stats_reset) {
+						Cache.remove("month_stats");
+						Cache.remove("month_stats_reset");
+					}
+				}
+				let month_stats = Cache.get()[ "month_stats" ] ?? {};
+				if (!month_stats[ link ]) {
+					month_stats[ link ] = {};
+				}
+				month_stats[ link ][ new Date().getTime() ] = emoji.name !== "status_offline";
+				Cache.set("month_stats", month_stats);
+			}
 		}
 	}
 	embed.setDescription(contents);
@@ -115,6 +147,7 @@ async function sendStatusMessage(channel) {
 			await message.edit({embeds: [ embed ]});
 		}
 	}
+	counter++;
 	done = true;
 }
 
