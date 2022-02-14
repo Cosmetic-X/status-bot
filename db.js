@@ -9,7 +9,7 @@ const db = new Database('./database.db');
 module.exports.checkTables = function () {
 	db.exec("" +
 		"CREATE TABLE IF NOT EXISTS uptime (" +
-		"`link` TEXT PRIMARY KEY," +
+		"`link` TEXT," +
 		"`status` BOOLEAN," +
 		"`timestamp` INTERGER NOT NULL" +
 		");");

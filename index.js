@@ -127,8 +127,8 @@ async function sendStatusMessage(channel) {
 				uptime = {};
 			}
 			let online = 0, offline = 0;
-			for (let hour in uptime) {
-				if (uptime[ hour ] === true) {
+			for (let key in uptime) {
+				if (uptime[ key ][ "status" ] === 0) {
 					online++;
 				} else {
 					offline++;
