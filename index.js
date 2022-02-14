@@ -105,7 +105,7 @@ async function sendStatusMessage(channel) {
 
 	let embed = new Discord.MessageEmbed();
 	let color = "GREEN";
-	let contents = "";
+	let contents = [];
 
 	for (let name in config.sites) {
 		let started = (Date.now() % 1000) / 1000;
@@ -141,7 +141,7 @@ async function sendStatusMessage(channel) {
 			}
 			uptime = " - " + ((!isNaN(uptime) ? uptime : 100) + "% uptime");
 			ping = (emoji.name !== "status_offline" ? "  -  `" + ping + "ms`" : "");
-			contents += emoji.toString() + " " + name + ping + uptime + "\n";
+			contents[ contents.length ] = emoji.toString() + " " + name + ping + uptime + "\n";
 			db.add(link, emoji.name !== "status_offline");
 
 			if (emoji.name === "status_offline") {
@@ -151,7 +151,7 @@ async function sendStatusMessage(channel) {
 			}
 		}
 	}
-	embed.setDescription(contents);
+	embed.setDescription(contents.join("\n"));
 	embed.setTitle("Status");
 	embed.setColor(color);
 	embed.setTimestamp(new Date());
