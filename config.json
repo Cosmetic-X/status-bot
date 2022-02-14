@@ -3,5 +3,9 @@
 	"refresh_seconds": 30,
 	"sites": {
 		"Rest-API": "https://cosmetic-x.de/ping"
-	}
+	},
+	"clear-uptime-roles-allowed": [
+		"938383562703503391",
+		"938563896640417883"
+	]
 }

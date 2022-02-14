@@ -10,7 +10,10 @@
   "author": "xxAROX",
   "license": "Custom",
   "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
     "better-sqlite3": "^7.5.0",
+    "discord-api-types": "^0.27.1",
     "discord.js": "^13.6",
     "fs": "^0.0.1-security",
     "superagent": "^7.1.1"

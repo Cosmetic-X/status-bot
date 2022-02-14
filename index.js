@@ -7,11 +7,13 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const db = require("./db.js");
+const {REST} = require("@discordjs/rest");
+const DiscordBuilders = require("@discordjs/builders");
+const {Routes} = require("discord-api-types/v9");
 
 db.checkTables();
 
 global.done = true;
-global.hour = -1;
 global.config = require("./config.json");
 
 global.Cache = {};
@@ -43,9 +45,11 @@ global.Cache.remove = function (key) {
 const bot = new Discord.Client({intents: Discord.Intents.FLAGS.GUILD_MESSAGES | Discord.Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS | Discord.Intents.FLAGS.GUILDS});
 
 bot.on("ready", async () => {
-	global.GUILD_NOT_FOUND_MESSAGE = "[ERROR] Discord server not found, invite me here https://discord.com/oauth2/authorize?client_id=" + bot.user.id + "&permissions=1073741824&scope=bot&guild_id=" + config.guild_id;
+	global.GUILD_NOT_FOUND_MESSAGE = "[ERROR] Discord server not found, invite me here https://discord.com/oauth2/authorize?client_id=" + bot.user.id + "&permissions=1073741824&scope=applications.commands%20bot&guild_id=" + config.guild_id;
 	console.log("Logged in as " + bot.user.tag);
 	bot.user.setActivity({name: "Status of Cosmetic-X sites", url: "https://cosmetic-x.de", type: "WATCHING"});
+
+	await registerSlashCommands();
 
 	let guild = await bot.guilds.fetch(config.guild_id);
 	if (!guild) {
@@ -56,6 +60,27 @@ bot.on("ready", async () => {
 			await checkStatus();
 		}, 1000 * config.refresh_seconds);
 		await checkStatus();
+	}
+});
+
+bot.on("interactionCreate", /** @param {Discord.CommandInteraction} interaction */ async (interaction) => {
+	if (!interaction.isCommand()) {
+		return;
+	}
+	if (interaction.commandName === "reset-uptime") {
+		let hasPermission = false;
+		for (let roleId of config[ "clear-uptime-roles-allowed" ]) {
+			if (!hasPermission) {
+				hasPermission = interaction.member.roles.cache.has(roleId);
+			}
+		}
+		if (!hasPermission) {
+			await interaction.reply("You don't have the permission to use that command!");
+		} else {
+			db.clear();
+			await checkStatus();
+			await interaction.reply("Cache cleared successfully!");
+		}
 	}
 });
 
@@ -178,6 +203,19 @@ async function sendStatusMessage(channel) {
 		}
 	}
 	done = true;
+}
+
+async function registerSlashCommands() {
+	const DiscordBuilders = require("@discordjs/builders");
+	const {Routes} = require('discord-api-types/v9');
+	const {REST} = require("@discordjs/rest");
+	const restClient = new REST({version: "9"}).setToken(fs.readFileSync("./TOKEN.txt").toString());
+
+	let resetUptimeSlashCommand = new DiscordBuilders.SlashCommandBuilder();
+	resetUptimeSlashCommand.setName("reset-uptime");
+	resetUptimeSlashCommand.setDescription("Reset uptime percentage from status sites.");
+
+	restClient.put(Routes.applicationGuildCommands(bot.user.id, config.guild_id), {body: [ resetUptimeSlashCommand.toJSON() ]}).catch(console.error);
 }
 
 bot.login(fs.readFileSync("./TOKEN.txt").toString());

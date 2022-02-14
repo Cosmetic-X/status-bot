@@ -6,7 +6,7 @@
 const Database = require('better-sqlite3');
 const db = new Database('./database.db');
 
-module.exports.checkTables = function () {
+let checkTables = function () {
 	db.exec("" +
 		"CREATE TABLE IF NOT EXISTS uptime (" +
 		"`link` TEXT," +
@@ -14,12 +14,14 @@ module.exports.checkTables = function () {
 		"`timestamp` INTERGER NOT NULL" +
 		");");
 };
+module.exports.checkTables = checkTables;
 module.exports.get = function (link) {
 	let statement = db.prepare("SELECT status FROM uptime WHERE link=?;");
 	return statement.all(link);
 };
 module.exports.clear = function () {
-	db.exec("TRUNCATE TABLE uptime;");
+	db.exec("DROP TABLE uptime;");
+	checkTables();
 };
 module.exports.add = function (link, status) {
 	let statement = db.prepare("INSERT INTO uptime (link, status, timestamp) VALUES (?, ?, ?);");
