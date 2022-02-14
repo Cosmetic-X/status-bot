@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Jan Sohn.
+ * All rights reserved.
+ * I don't want anyone to use my source code without permission.
+ */
+
 const Discord = require("discord.js");
 const fs = require("fs");
 
