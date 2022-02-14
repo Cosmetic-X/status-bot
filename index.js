@@ -6,9 +6,12 @@
 
 const Discord = require("discord.js");
 const fs = require("fs");
+const db = require("./db.js");
+
+db.checkTables();
 
 global.done = true;
-global.counter = 0;
+global.hour = -1;
 global.config = require("./config.json");
 
 global.Cache = {};
@@ -119,31 +122,31 @@ async function sendStatusMessage(channel) {
 			if (ping >= 5.0) {
 				emoji = channel.guild.emojis.cache.filter(emoji => emoji.name === "status_slow").first();
 			}
-			contents += emoji.toString() + " " + name + (emoji.name !== "status_offline"
-				? "  -  `" + ping + "ms`"
-				: "") + "\n";
-
-			if (counter % 2 === 0) {
-				let month_stats_reset = Cache.get()[ "month_stats_reset" ];
-				if (!month_stats_reset) {
-					Cache.set("month_stats_reset", new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime());
-				} else {
-					if (new Date().getTime() <= month_stats_reset) {
-						Cache.remove("month_stats");
-						Cache.remove("month_stats_reset");
-					}
-				}
-				let month_stats = Cache.get()[ "month_stats" ];
-				if (!month_stats) {
-					month_stats = {};
-				}
-				if (!month_stats[ link ]) {
-					month_stats[ link ] = {};
-				}
-				month_stats[ link ][ new Date().getTime() ] = emoji.name !== "status_offline";
-				Cache.set("month_stats", month_stats);
+			let uptime = db.get(link);
+			if (!uptime) {
+				uptime = {};
 			}
+			let online = 0, offline = 0;
+			for (let hour in uptime) {
+				if (uptime[ hour ] === true) {
+					online++;
+				} else {
+					offline++;
+				}
+			}
+			if (offline === 0) {
+				uptime = 100;
+			} else {
+				uptime = (online / offline * 100).toFixed(1);
+			}
+			uptime = " - " + ((!isNaN(uptime) ? uptime : 100) + "% uptime");
+			ping = (emoji.name !== "status_offline" ? "  -  `" + ping + "ms`" : "");
+			contents += emoji.toString() + " " + name + ping + uptime + "\n";
 
+			if (new Date().getHours() !== hour) {
+				hour = new Date().getHours();
+				db.add(link, emoji.name !== "status_offline");
+			}
 			if (emoji.name === "status_offline") {
 				color = "RED";
 			} else if (emoji.name === "status_slow" && color !== "RED") {
@@ -176,7 +179,6 @@ async function sendStatusMessage(channel) {
 			await message.edit({embeds: [ embed ]});
 		}
 	}
-	counter++;
 	done = true;
 }
 

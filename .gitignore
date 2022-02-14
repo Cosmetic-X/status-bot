@@ -3,3 +3,4 @@ node_modules
 .idea/deployment.xml
 TOKEN.txt
 cache.json
+database.db
