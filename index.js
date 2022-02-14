@@ -49,6 +49,12 @@ bot.on("ready", async () => {
 	}
 });
 
+bot.on("messageCreate", async (message) => {
+	if (message.channel.name === "status" && message.author.id !== bot.user.id) {
+		await message.delete();
+	}
+});
+
 bot.on("guildCreate", async (guild) => {
 	if (guild.id !== config.guild_id) {
 		await guild.leave();
@@ -122,7 +128,10 @@ async function sendStatusMessage(channel) {
 						Cache.remove("month_stats_reset");
 					}
 				}
-				let month_stats = Cache.get()[ "month_stats" ] ?? {};
+				let month_stats = Cache.get()[ "month_stats" ];
+				if (!month_stats) {
+					month_stats = {};
+				}
 				if (!month_stats[ link ]) {
 					month_stats[ link ] = {};
 				}
