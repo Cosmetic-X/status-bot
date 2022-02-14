@@ -116,7 +116,7 @@ async function sendStatusMessage(channel) {
 			emoji = channel.guild.emojis.cache.filter(emoji => emoji.name === "status_online").first();
 		} catch (e) {
 			emoji = channel.guild.emojis.cache.filter(emoji => emoji.name === "status_offline").first();
-			console.error(e.message);
+			console.error("[" + link + "]: " + e.message);
 		} finally {
 			let ping = Math.abs(((Date.now() % 1000) / 1000) - started).toFixed(4);
 			if (ping >= 5.0) {
@@ -151,7 +151,7 @@ async function sendStatusMessage(channel) {
 			}
 		}
 	}
-	embed.setDescription(contents.join("\n"));
+	embed.setDescription(contents.join("\n") + "\n");
 	embed.setTitle("Status");
 	embed.setColor(color);
 	embed.setTimestamp(new Date());
