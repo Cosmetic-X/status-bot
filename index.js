@@ -138,7 +138,7 @@ async function sendStatusMessage(channel) {
 			if (offline === 0) {
 				uptime = 100;
 			} else {
-				uptime = (offline / online * 100).toFixed(1);
+				uptime = (100 - (offline / online * 100)).toFixed(1);
 			}
 			uptime = " - " + ((!isNaN(uptime) ? uptime : 100) + "% uptime");
 			ping = (emoji.name !== "status_offline" ? "  -  `" + ping + "ms`" : "");
