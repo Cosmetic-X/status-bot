@@ -1,1 +1,1 @@
-tmux new-session -s Cosmetic-X-Status-Bot docker-compose up
+tmux new-session -s Cosmetic-X-Status-Bot npm start #docker-compose up
