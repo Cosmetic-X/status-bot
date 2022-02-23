@@ -72,11 +72,11 @@ bot.on("interactionCreate", /** @param {Discord.CommandInteraction} interaction 
 			}
 		}
 		if (!hasPermission) {
-			await interaction.reply("You don't have the permission to use that command!");
+			await interaction.reply({content: "You don't have the permission to use that command!", ephemeral: true});
 		} else {
 			db.clear();
 			await checkStatus();
-			await interaction.reply("Cache cleared successfully!");
+			await interaction.reply({content: "Cache cleared successfully!", ephemeral: true});
 		}
 	}
 });
