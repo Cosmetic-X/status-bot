@@ -2,7 +2,8 @@
 	"guild_id": "915188007693352960",
 	"refresh_seconds": 30,
 	"sites": {
-		"Rest-API": "https://cosmetic-x.de/ping"
+		"Rest-API": "https://cosmetic-x.de/ping",
+		"Dashboard": "https://cosmetic-x.de/dashboard"
 	},
 	"clear-uptime-roles-allowed": [
 		"938383562703503391",
