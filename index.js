@@ -169,6 +169,8 @@ async function sendStatusMessage(channel) {
 
 			if (emoji.name === "status_offline") {
 				color = "RED";
+			} else if (emoji.name === "status_unknown") {
+				color = "GRAY";
 			} else if (emoji.name === "status_slow" && color !== "RED") {
 				color = "YELLOW";
 			}
